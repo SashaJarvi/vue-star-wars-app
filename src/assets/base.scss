@@ -11,6 +11,12 @@
   font-weight: normal;
 }
 
+textarea,
+input {
+  -webkit-appearance: none;
+  border-radius: 0;
+}
+
 body {
   min-height: 100vh;
   color: #808080;
