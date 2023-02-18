@@ -8,9 +8,8 @@ import type { IPromiseResponse } from "@/ts/interfaces/promise-response";
 
 export const useCharactersStore = defineStore("characters", () => {
   const characters: Ref<ICharacter[]> = ref([]);
-  const nextPageUrl: Ref<string | null> = ref("");
+  const nextPageUrl: Ref<string> = ref("");
   const character: Ref<ICharacter | null> = ref(null);
-  const cachedCharacters: Ref<ICharacter[]> = ref([]);
 
   const getCharacters = async (url: string = "https://swapi.dev/api/people"): Promise<IPromiseResponse> => {
     try {
@@ -55,7 +54,7 @@ export const useCharactersStore = defineStore("characters", () => {
   const searchCharacter = async (searchStr: string) => {
     try {
       characters.value = [];
-      nextPageUrl.value = null;
+      nextPageUrl.value = "";
 
       const { data } = await axios.get<ICharactersResponse>(`https://swapi.dev/api/people?search=${searchStr}`);
 
@@ -65,8 +64,6 @@ export const useCharactersStore = defineStore("characters", () => {
       return { status: "failed", message: "Error" };
     }
   };
-
-  const isVisited = (character: ICharacter): boolean => !!cachedCharacters.value.find(c => c.url === character.url);
 
   const clearCharacters = (): void => {
     characters.value = [];
