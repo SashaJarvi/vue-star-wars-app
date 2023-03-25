@@ -19,6 +19,14 @@ import TheHeader from "@/components/TheHeader.vue";
 import TheDashboard from "@/components/TheDashboard.vue";
 import TheLoader from "@/components/TheLoader.vue";
 import TheFooter from "@/components/TheFooter.vue";
+
+const appHeight = () => {
+  const doc = document.documentElement;
+  doc.style.setProperty("--app-height", `${window.innerHeight}px`);
+};
+
+window.addEventListener("resize", appHeight);
+appHeight();
 </script>
 
 <style lang="scss" scoped>
