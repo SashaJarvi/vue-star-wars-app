@@ -15,10 +15,12 @@
 </template>
 
 <script setup lang="ts">
+import { defineAsyncComponent } from "vue";
 import TheHeader from "@/components/TheHeader.vue";
-import TheDashboard from "@/components/TheDashboard.vue";
 import TheLoader from "@/components/TheLoader.vue";
 import TheFooter from "@/components/TheFooter.vue";
+
+const TheDashboard = defineAsyncComponent(() => import("@/components/TheDashboard.vue"));
 
 const appHeight = () => {
   const doc = document.documentElement;
