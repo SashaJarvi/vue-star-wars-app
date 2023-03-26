@@ -51,17 +51,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { defineAsyncComponent, ref, watch } from "vue";
 import type { Ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useCharactersStore } from "@/stores/characters";
 import useDebouncedRef from "@/composables/use-debounced-ref";
 import delay from "@/utils/delay";
 import scrollLock from "@/utils/scroll-lock";
-import CharacterCard from "@/components/CharacterCard.vue";
-import CharacterModal from "@/components/CharacterModal.vue";
-import LoadMoreObserver from "@/components/LoadMoreObserver.vue";
 import CharacterSkeletonCard from "@/components/CharacterSkeletonCard.vue";
+
+const CharacterCard = defineAsyncComponent(() => import("@/components/CharacterCard.vue"));
+const CharacterModal = defineAsyncComponent(() => import("@/components/CharacterModal.vue"));
+const LoadMoreObserver = defineAsyncComponent(() => import("@/components/LoadMoreObserver.vue"));
 
 const { characters, nextPageUrl } = storeToRefs(useCharactersStore());
 const { getCharacters, searchCharacter, clearCharacters, clearCharacter } = useCharactersStore();

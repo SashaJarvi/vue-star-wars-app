@@ -152,7 +152,6 @@ const isLoading: Ref<boolean> = ref(false);
 const getCharacterHandler = async (): Promise<void> => {
   isLoading.value = true;
 
-  await delay(2000);
   await getCharacter(props.url);
 
   isLoading.value = false;
