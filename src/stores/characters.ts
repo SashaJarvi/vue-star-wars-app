@@ -5,11 +5,13 @@ import axios from "axios";
 import type { ICharactersResponse } from "@/ts/interfaces/characters-response";
 import type { ICharacter } from "@/ts/interfaces/character";
 import type { IPromiseResponse } from "@/ts/interfaces/promise-response";
+import delay from "@/utils/delay";
 
 export const useCharactersStore = defineStore("characters", () => {
   const characters: Ref<ICharacter[]> = ref([]);
   const nextPageUrl: Ref<string> = ref("");
   const character: Ref<ICharacter | null> = ref(null);
+  const visitedCharacters: Ref<ICharacter[]> = ref([]);
 
   const getCharacters = async (url: string = "https://swapi.dev/api/people"): Promise<IPromiseResponse> => {
     try {
@@ -24,26 +26,36 @@ export const useCharactersStore = defineStore("characters", () => {
     }
   };
 
-  const getCharacter = async (url: string): Promise<IPromiseResponse> => {
+  const getCharacter = async (url: string): Promise<IPromiseResponse | void> => {
+    if (checkIsVisited(url)) {
+      character.value = visitedCharacters.value.find(c => c.url === url) as ICharacter;
+      return;
+    }
+
+    await delay();
+
     try {
       const { data } = await axios.get<ICharacter>(`${url}`);
-      character.value = data;
+      const characterData = data;
 
       // getting of homeworld info
-      const homeworld = await axios.get(character.value?.homeworld).then(res => res.data);
-      character.value.homeworld = homeworld.name;
+      const homeworld = await axios.get(characterData?.homeworld).then(res => res.data);
+      characterData.homeworld = homeworld.name;
 
       // getting of films info
-      character.value.films = await axios
-        .all(character.value.films.map(url => axios.get(url)))
+      characterData.films = await axios
+        .all(characterData.films.map(url => axios.get(url)))
         .then(res => res.map(r => r.data))
         .then(data => data.map(film => film.title));
 
       // getting of species info
-      character.value.species = await axios
-        .all(character.value.species.map(url => axios.get(url as string)))
+      characterData.species = await axios
+        .all(characterData.species.map(url => axios.get(url as string)))
         .then(res => res.map(r => r.data))
         .then(data => data.map(specie => specie.name));
+
+      character.value = characterData;
+      visitedCharacters.value.push(character.value);
 
       return { status: "success" };
     } catch (e) {
@@ -73,10 +85,15 @@ export const useCharactersStore = defineStore("characters", () => {
     character.value = null;
   };
 
+  const checkIsVisited = (url: string): boolean => {
+    return !!visitedCharacters.value.find(c => c.url === url);
+  };
+
   return {
     characters,
     nextPageUrl,
     character,
+    visitedCharacters,
     getCharacters,
     getCharacter,
     searchCharacter,
