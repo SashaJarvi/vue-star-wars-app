@@ -147,8 +147,6 @@ const emit = defineEmits<{
 const { character } = storeToRefs(useCharactersStore());
 const { getCharacter } = useCharactersStore();
 
-const root: Ref<HTMLElement | null> = ref(null);
-
 const isLoading: Ref<boolean> = ref(false);
 
 const getCharacterHandler = async (): Promise<void> => {
